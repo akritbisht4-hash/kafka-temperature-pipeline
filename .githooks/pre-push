@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Pre-push hook: ensures cargo test passes before allowing code to be pushed.
+set -e
+
+echo "=========================================="
+echo " Running pre-push checks: cargo test..."
+echo "=========================================="
+
+if ! cargo test; then
+    echo ""
+    echo "❌ PUSH BLOCKED: Test suite failed."
+    echo "Please resolve failing tests before pushing."
+    echo "=========================================="
+    exit 1
+fi
+
+echo "=========================================="
+echo "✅ All tests passed! Push permitted."
+echo "=========================================="
+exit 0
