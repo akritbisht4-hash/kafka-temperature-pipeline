@@ -211,4 +211,15 @@ mod tests {
         assert!(dt.is_some());
         assert_eq!(dt.unwrap().timestamp_millis(), 1_700_000_000_000);
     }
+
+    #[test]
+    fn test_random_event_is_valid() {
+        for _ in 0..20 {
+            let ev = SensorEvent::random("sensor-random");
+            assert!(ev.validate().is_ok());
+            assert_eq!(ev.sensor_id, "sensor-random");
+            assert!((15.0..=45.0).contains(&ev.temperature_c));
+            assert!((20.0..=95.0).contains(&ev.humidity_pct));
+        }
+    }
 }
