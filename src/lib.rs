@@ -194,4 +194,13 @@ mod tests {
         let ev = SensorEvent::new("   ".to_owned(), 20.0, 50.0, 1_700_000_000_000);
         assert!(ev.validate().is_err());
     }
+
+    #[test]
+    fn test_format_for_storage_ok_prefix() {
+        let p = process_event(sample(25.0)).unwrap();
+        assert!(!p.alert);
+        let line = format_for_storage(&p);
+        assert!(line.starts_with("[OK]"));
+        assert!(line.contains("sensor-1"));
+    }
 }
