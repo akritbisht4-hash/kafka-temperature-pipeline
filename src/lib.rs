@@ -173,4 +173,10 @@ mod tests {
         let ev = sample(-60.0);
         assert!(ev.validate().is_err());
     }
+
+    #[test]
+    fn test_validation_rejects_negative_humidity() {
+        let ev = SensorEvent::new("s-1".to_owned(), 20.0, -1.0, 1_700_000_000_000);
+        assert!(ev.validate().is_err());
+    }
 }
