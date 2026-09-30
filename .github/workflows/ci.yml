@@ -8,16 +8,25 @@ on:
 
 jobs:
   test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
-      - name: fmt
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check code formatting (cargo fmt)
         run: cargo fmt --check
-      - name: clippy
+
+      - name: Lint codebase (cargo clippy)
         run: cargo clippy -- -D warnings
-      - name: tests
+
+      - name: Run test suite (cargo test)
         run: cargo test --verbose
