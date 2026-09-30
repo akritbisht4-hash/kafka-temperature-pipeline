@@ -1,6 +1,34 @@
 # Kafka Event Pipeline in Rust
 
-Project 2 — Kafka-based event pipeline. No AWS needed, runs 100% locally with Docker.
+Distributed event-driven data pipeline built with Rust and Apache Kafka (KRaft mode). Built as a distributed systems college assignment exploring message queues, event-driven architectures, message delivery guarantees, and monotonic ordering.
+
+[![CI](https://github.com/yadavayush834/kafka-rust-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavayush834/kafka-rust-pipeline/actions/workflows/ci.yml)
+![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-3.7.0_(KRaft)-black?logo=apachekafka)
+![Docker](https://img.shields.io/badge/Docker_Compose-Multi--Container-blue?logo=docker)
+
+---
+
+## Table of Contents
+- [What Was Built](#what-was-built)
+- [Architecture & Data Flow](#architecture--data-flow)
+- [Core Concepts & Themes](#core-concepts--themes)
+  - [1. Event-Driven Thinking & Decoupling](#1-event-driven-thinking--decoupling)
+  - [2. Message Delivery Semantics (At-Least-Once)](#2-message-delivery-semantics-at-least-once)
+  - [3. Message Ordering & Partition Log](#3-message-ordering--partition-log)
+  - [4. Fault Tolerance & Resilient Startup](#4-fault-tolerance--resilient-startup)
+- [Project Structure](#project-structure)
+- [How to Run](#how-to-run)
+  - [Option A: Docker Compose (Recommended)](#option-a-docker-compose-recommended)
+  - [Option B: Local Rust Development](#option-b-local-rust-development)
+  - [Configuration via Environment Variables](#configuration-via-environment-variables)
+- [Testing Suite](#testing-suite)
+- [Push Blocking & CI/CD](#push-blocking--cicd)
+  - [Local Git Pre-Push Hook](#local-git-pre-push-hook)
+  - [GitHub Actions CI/CD](#github-actions-cicd)
+- [Design Decisions](#design-decisions)
+
+---
 
 ## What I built
 Mock sensor producer → Kafka topic (`sensor-events`) → Rust consumer → `output/events.jsonl`.
