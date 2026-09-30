@@ -167,4 +167,10 @@ mod tests {
         let bad = r#"{"sensor_id":"s-1","temperature_c":999.0,"humidity_pct":50.0,"timestamp_ms":1700000000000}"#;
         assert!(SensorEvent::from_json(bad.as_bytes()).is_err());
     }
+
+    #[test]
+    fn test_validation_rejects_extreme_cold_temp() {
+        let ev = sample(-60.0);
+        assert!(ev.validate().is_err());
+    }
 }
