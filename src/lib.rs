@@ -203,4 +203,12 @@ mod tests {
         assert!(line.starts_with("[OK]"));
         assert!(line.contains("sensor-1"));
     }
+
+    #[test]
+    fn test_datetime_conversion() {
+        let ev = sample(20.0);
+        let dt = ev.datetime();
+        assert!(dt.is_some());
+        assert_eq!(dt.unwrap().timestamp_millis(), 1_700_000_000_000);
+    }
 }
