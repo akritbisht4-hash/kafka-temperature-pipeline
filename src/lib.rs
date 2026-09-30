@@ -188,4 +188,10 @@ mod tests {
         let ev_neg = SensorEvent::new("s-1".to_owned(), 20.0, 50.0, -100);
         assert!(ev_neg.validate().is_err());
     }
+
+    #[test]
+    fn test_validation_rejects_whitespace_sensor_id() {
+        let ev = SensorEvent::new("   ".to_owned(), 20.0, 50.0, 1_700_000_000_000);
+        assert!(ev.validate().is_err());
+    }
 }
