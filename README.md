@@ -66,6 +66,55 @@ flowchart LR
     T -->|Fetch Response| C1
 ```
 
+---
+
+## Core Concepts & Themes
+
+### 1. Event-Driven Thinking & Decoupling
+- **Temporal Decoupling**: The producer and consumer run on independent event loops and lifecycles. If the consumer stops or crashes, messages accumulate safely in Kafka's committed log without dropping sensor data.
+- **Backpressure Protection**: The consumer pulls messages at its own pace using `fetch_records` batches rather than having records forcefully pushed to it.
+
+### 2. Message Delivery Semantics (At-Least-Once)
+- The consumer reads a batch of records, validates them, evaluates alerting rules, and flushes them to disk before advancing its read cursor (`offset = kafka_offset + 1`).
+- If an unhandled crash occurs mid-batch, the next consumer restart replays from the last successfully processed offset, preventing message loss.
+
+### 3. Message Ordering & Partition Log
+- Kafka guarantees total order within a single partition.
+- Each event is assigned a monotonically increasing 64-bit integer offset (`0, 1, 2, ...`).
+- Consumer polls sequentially from `OffsetAt::Earliest`, ensuring that events are processed and written to storage in the exact order they were published by the producer.
+
+### 4. Fault Tolerance & Resilient Startup
+- Both producer and consumer implement an exponential/linear retry loop (up to 30 attempts, 2-second intervals). This ensures graceful self-healing during cold starts on low-resource machines where the Kafka broker takes 10–15 seconds to finish metadata synchronization.
+
+---
+
+## Project Structure
+
+```
+kafka-rust-pipeline/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # CI workflow (cargo fmt, clippy, tests)
+├── .githooks/
+│   └── pre-push                # Git hook blocking pushes if tests fail
+├── scripts/
+│   └── setup-hooks.sh          # One-step hook configuration script
+├── src/
+│   ├── bin/
+│   │   ├── consumer.rs         # Consumer application entrypoint
+│   │   └── producer.rs         # Producer application entrypoint
+│   └── lib.rs                  # Core data models, validation, alert logic & 15 unit tests
+├── tests/
+│   └── pipeline_integration_test.rs # Integration test suite
+├── docker-compose.yml          # Container orchestration (Kafka + Producer + Consumer)
+├── Dockerfile                  # Multi-stage Dockerfile for reproducible builds
+├── Cargo.toml                  # Rust dependencies & binary targets
+├── Cargo.lock                  # Pinned dependency versions
+└── README.md                   # Comprehensive project documentation
+```
+
+---
+
 ## How to run
 
 ### 1. Prereqs (Omarchy / Arch)
