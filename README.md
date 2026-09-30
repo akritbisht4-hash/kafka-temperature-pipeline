@@ -30,27 +30,41 @@ Distributed event-driven data pipeline built with Rust and Apache Kafka (KRaft m
 
 ---
 
-## What I built
-Mock sensor producer → Kafka topic (`sensor-events`) → Rust consumer → `output/events.jsonl`.
+## What Was Built
 
-Theme: message-queue / event-driven thinking, message delivery + ordering.
+A full-stack, distributed producer-consumer pipeline:
+1. **Producer (`src/bin/producer.rs`)**: Emits structured IoT sensor events (`SensorEvent`) with randomized temperature, humidity, and timestamps to the Kafka topic `sensor-events`.
+2. **Kafka Broker (`docker-compose.yml`)**: Single-node Apache Kafka 3.7 running modern **KRaft mode** (no ZooKeeper dependency).
+3. **Consumer (`src/bin/consumer.rs`)**: Reads the partition log sequentially from the earliest offset, deserializes and validates payloads, evaluates an alert condition (triggers `ALERT` when temperature > 35.0°C), and appends formatted records to `output/events.jsonl`.
 
+---
+
+## Architecture & Data Flow
+
+```mermaid
+flowchart LR
+    subgraph Producer ["Rust Producer (src/bin/producer.rs)"]
+        P1[Generate SensorEvent] --> P2[JSON Serialize]
+        P2 --> P3[Publish with Key: sensor_id]
+    end
+
+    subgraph Kafka ["Apache Kafka Broker (KRaft Mode)"]
+        T["Topic: sensor-events\nPartition 0 (Ordered Append-Only Log)"]
+    end
+
+    subgraph Consumer ["Rust Consumer (src/bin/consumer.rs)"]
+        C1[Fetch Records from Offset] --> C2[JSON Deserialize & Validate]
+        C2 --> C3{Temp > 35°C?}
+        C3 -->|Yes| C4["Tag [ALERT]"]
+        C3 -->|No| C5["Tag [OK]"]
+        C4 --> C6[Append to output/events.jsonl]
+        C5 --> C6
+        C6 --> C7[Advance In-Memory Offset]
+    end
+
+    P3 -->|Produce Request| T
+    T -->|Fetch Response| C1
 ```
-producer (random SensorEvent JSON)
-   |
-   v
-Kafka topic `sensor-events` (1 partition, ordered log)
-   |
-   v
-consumer (validate -> alert rule -> append to file)
-```
-
-## Architecture
-- `src/lib.rs`: `SensorEvent`, `validate()`, `is_alert()`, `process_event()`, `format_for_storage()` + 8 unit tests
-- `src/bin/producer.rs`: generates mock temp/humidity events, produces with `rskafka` (pure Rust, no cmake/librdkafka needed)
-- `src/bin/consumer.rs`: `fetch_records` loop from earliest offset, validates, marks `ALERT` if temp > 35°C, writes JSONL
-- `docker-compose.yml`: `apache/kafka:3.7.0` KRaft single-node (512M heap for 8GB RAM machines) + producer + consumer
-- `.github/workflows/ci.yml`: `cargo fmt --check`, `clippy`, `cargo test` — block merge if fail
 
 ## How to run
 
