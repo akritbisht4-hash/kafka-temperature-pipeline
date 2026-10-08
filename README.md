@@ -2,7 +2,7 @@
 
 Distributed event-driven data pipeline built with Rust and Apache Kafka (KRaft mode). Built as a distributed systems college assignment exploring message queues, event-driven architectures, message delivery guarantees, and monotonic ordering.
 
-[![CI](https://github.com/yadavayush834/kafka-rust-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavayush834/kafka-rust-pipeline/actions/workflows/ci.yml)
+[![CI](https://github.com/akritbisht4-hash/kafka-rust-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/akritbisht4-hash/kafka-rust-pipeline/actions/workflows/ci.yml)
 ![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust)
 ![Kafka](https://img.shields.io/badge/Apache_Kafka-3.7.0_(KRaft)-black?logo=apachekafka)
 ![Docker](https://img.shields.io/badge/Docker_Compose-Multi--Container-blue?logo=docker)
@@ -236,7 +236,7 @@ failures:
 ❌ PUSH BLOCKED: Test suite failed.
 Please resolve failing tests before pushing.
 ==========================================
-error: failed to push some refs to 'github.com:yadavayush834/kafka-rust-pipeline.git'
+error: failed to push some refs to 'github.com:akritbisht4-hash/kafka-rust-pipeline.git'
 ```
 
 ### GitHub Actions CI/CD
