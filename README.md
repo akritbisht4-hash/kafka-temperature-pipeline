@@ -1,4 +1,5 @@
-# Kafka Event Pipeline in Rust
+# Kafka Event Pipeline
+
 
 Distributed event-driven data pipeline built with Rust and Apache Kafka (KRaft mode). Built as a distributed systems college assignment exploring message queues, event-driven architectures, message delivery guarantees, and monotonic ordering.
 
